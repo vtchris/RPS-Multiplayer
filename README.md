@@ -1,4 +1,4 @@
-<h1><em>Rock Paper Scissos - Multiplayer</em></h1>
+<h1><em>Rock Paper Scissors - Multiplayer</em></h1>
 
 <h2>Technology</h2>
 <ul> 
