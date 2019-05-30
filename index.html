@@ -11,13 +11,28 @@
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    <!-- Firebase Reference -->
+  
+   <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
     <!-- jQuery Reference -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <!-- Firebase Reference -->
-    <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
+    
 </head>
+
 <body>
 
+    <div id="instructions" class="jumbotron">
+        <div id="mode" class="input-group radio">
+            <label>
+                <input type="radio" name="mode" value="1">Single Player Mode
+            </label>
+            <label>
+                <input type="radio" name="mode" value="2">Two Player Mode
+            </label>
+        </div>
+        <input type="text" id="txtName" placeholder="John Doe">
+        <button id="btnSubmit">Enter</button>
+    </div>
 
     <script src="assets/javascript/game.js"></script>
 </body>
