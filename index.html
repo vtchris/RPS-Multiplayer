@@ -9,14 +9,17 @@
     <!-- Style Links -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+   <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">-->
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
     <!-- Firebase Reference -->
-  
-   <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
     <!-- jQuery Reference -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    
+
 </head>
 
 <body>
@@ -32,6 +35,36 @@
         </div>
         <input type="text" id="txtName" placeholder="John Doe">
         <button id="btnSubmit">Enter</button>
+    </div>
+
+    <div id="gameBoard" class="container">
+        <div id="divGameStyle" class="card invisible">
+            <div class="card-header">
+                <h2>Select Game</h2>
+            </div>
+            <div class="card-body">
+                    <button id="btnRPS">Rock-Paper-Scissors</button>
+                    <button id="btnRPSLS">Rock-Paper-Scissors-Lizard-Spock</button>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col col-lg-6">
+                <div id="divPlayer" class="card">
+                    <div class="card-header">
+                        <h2 id="playerName"></h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 id="opponentName"></h2>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
 
     <script src="assets/javascript/game.js"></script>
