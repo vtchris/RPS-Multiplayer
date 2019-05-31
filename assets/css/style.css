@@ -1,0 +1,21 @@
+body{
+    background-color:#aab19a;
+    background-image: url("../images/green_cup.png");
+    height:100%;
+}
+.display_none{
+    display: none;
+}
+.modal-backdrop
+{
+    opacity:0.4 !important;
+}
+#pageFooter{
+    border-top: 2px solid #66ffff;
+}
+#results-modal img{
+    height: 150px;width:auto;
+}
+#weapons-div .btn{
+    min-width:120px;
+}

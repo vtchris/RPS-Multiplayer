@@ -9,65 +9,130 @@
     <!-- Style Links -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-   <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">-->
-    
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+        integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
 
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
-    <!-- Firebase Reference -->
 
+    <!-- Firebase Reference -->
     <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
+
     <!-- jQuery Reference -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 
 </head>
 
 <body>
-
-    <div id="instructions" class="jumbotron">
-        <div id="mode" class="input-group radio">
-            <label>
-                <input type="radio" name="mode" value="1">Single Player Mode
-            </label>
-            <label>
-                <input type="radio" name="mode" value="2">Two Player Mode
-            </label>
+    <!-- WELCOME JUMBOTRON START-->
+    <div id="welcome-div" class="container mt-5">
+        <div id="instructions" class="jumbotron shadow">
+            <h1 class="display-4">Rock Paper Scissors</h1>
+            <hr class="mb-5">
+            <div id="mode" class="input-group radio">
+                <label>
+                    <input type="radio" name="mode" class="mb-4" value="1">Single Player Mode
+                </label>
+                <label>
+                    <input type="radio" name="mode" class="mb-4 ml-5" value="2" checked="checked">Two Player Mode
+                </label>
+            </div>
+            <input type="text" class="p-1" id="name-txt" placeholder="John Doe" maxlength="15" autofocus>
+            <button id="submit-btn" class="btn btn-primary btn-lg">Enter</button>
         </div>
-        <input type="text" id="txtName" placeholder="John Doe">
-        <button id="btnSubmit">Enter</button>
     </div>
-
-    <div id="gameBoard" class="container">
-        <div id="divGameStyle" class="card invisible">
+    <!-- WELCOME JUMBOTRON END-->
+    <!-- GAME BOARD START-->
+    <div id="gameBoard_div" class="container display_none">
+        <div id="game-style-div" class="card display_none">
             <div class="card-header">
                 <h2>Select Game</h2>
             </div>
             <div class="card-body">
-                    <button id="btnRPS">Rock-Paper-Scissors</button>
-                    <button id="btnRPSLS">Rock-Paper-Scissors-Lizard-Spock</button>
+                <button id="btnRPS" class="btn btn-primary">Rock-Paper-Scissors</button>
+                <button id="btnRPSLS" class="btn btn-primary">Rock-Paper-Scissors-Lizard-Spock</button>
             </div>
         </div>
-        
-        <div class="row">
-            <div class="col col-lg-6">
-                <div id="divPlayer" class="card">
-                    <div class="card-header">
+
+        <div class="row mt-5">
+            <div class="col col-lg-6 d-flex align-items-stretch">
+                <div id="player-div" class="card">
+                    <div class="card-header bg-secondary text-light">
                         <h2 id="playerName"></h2>
                     </div>
                 </div>
             </div>
-            <div class="col col-lg-6">
+            <div class="col col-lg-6 d-flex align-items-stretch">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header bg-secondary text-light">
                         <h2 id="opponentName"></h2>
+                    </div>
+                    <div class="card-body">
+
                     </div>
                 </div>
 
             </div>
         </div>
     </div>
+    <!-- GAME BOARD END-->
 
-    <script src="assets/javascript/game.js"></script>
+
+    <!-- Modal -->
+    <div class="modal" id="results-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenteredLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenteredLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ...<img id="player-img">
+                    <img id="opponent-img">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER START-->
+    <footer id="pageFooter" class="fixed-bottom bg-dark text-center text-muted">
+        <ul>
+            <li class="list-inline-item">
+                <h4 class="display-5 mt-2">JAVASCRIPT &nbsp; &#8226; &nbsp;</h4>
+            </li>
+            <li class="list-inline-item">
+                <h4 class="display-5 mt-2">JQUERY &nbsp; &#8226; &nbsp;</h4>
+            </li>
+            <li class="list-inline-item">
+                <h4 class="display-5 mt-2">FIREBASE &nbsp; &#8226; &nbsp;</h4>
+            </li>
+            <li class="list-inline-item">
+                <h4 class="display-5 mt-2">HTML/CSS &nbsp; &#8226; &nbsp;</h4>
+            </li>
+            <li class="list-inline-item">
+                <h4 class="display-5 mt-2">BOOTSTRAP</h4>
+            </li>
+        </ul>
+
+        <a href="https://vtchris.github.io/Responsive-Portfolio/" target="_blank"
+            class="btn btn-secondary mb-3 mr-4"><span class="fa fa-address-card pr-2"></span>Portfolio: Chris Ross</a>
+        <a href="https://github.com/vtchris/" target="_blank" class="fab fa-github text-muted mr-4"
+            style="font-size:38px;"></a>
+        <a href="https://www.linkedin.com/in/chris-ross-71a95711/" target="_blank"
+            class="fab fa-linkedin text-muted" style="font-size:38px;"></a>
+
+        <footer>
+        <!-- FOOTER END-->
+
+            <script src="assets/javascript/game.js"></script>
 </body>
 
 </html>
