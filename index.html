@@ -39,7 +39,7 @@
                 </label>
             </div>
             <input type="text" class="p-1" id="name-txt" placeholder="John Doe" maxlength="15" autofocus>
-            <button id="submit-btn" class="btn btn-primary btn-lg">Enter</button>
+            <button id="submit-btn" type="submit" class="btn btn-primary btn-lg">Enter</button>
         </div>
     </div>
     <!-- WELCOME JUMBOTRON END-->
@@ -50,26 +50,37 @@
                 <h2>Select Game</h2>
             </div>
             <div class="card-body">
-                <button id="btnRPS" class="btn btn-primary">Rock-Paper-Scissors</button>
-                <button id="btnRPSLS" class="btn btn-primary">Rock-Paper-Scissors-Lizard-Spock</button>
+                <button id="rps-btn" class="btn btn-primary">Rock-Paper-Scissors</button>
+                <button id="rpslv-btn" class="btn btn-primary">Rock-Paper-Scissors-Lizard-Spock</button>
             </div>
         </div>
 
         <div class="row mt-5">
             <div class="col col-lg-6 d-flex align-items-stretch">
-                <div id="player-div" class="card">
+                <div id="player-div" class="card shadow">
                     <div class="card-header bg-secondary text-light">
                         <h2 id="playerName"></h2>
+                    </div>
+                    <div id="player-body-div" class="card-body">
+
+                    </div>
+                    <div class="card-footer bg-secondary text-light">
+                        <label id="player-wins-label"></label>
+                        <label id="player-losses-label" class="float-right"></label>
                     </div>
                 </div>
             </div>
             <div class="col col-lg-6 d-flex align-items-stretch">
-                <div class="card">
+                <div class="card shadow">
                     <div class="card-header bg-secondary text-light">
                         <h2 id="opponentName"></h2>
                     </div>
                     <div class="card-body">
 
+                    </div>
+                    <div class="card-footer bg-secondary text-light">
+                        <label id="opponent-wins-label"></label>
+                        <label id="opponent-losses-label" class="float-right"></label>
                     </div>
                 </div>
 
@@ -126,11 +137,11 @@
             class="btn btn-secondary mb-3 mr-4"><span class="fa fa-address-card pr-2"></span>Portfolio: Chris Ross</a>
         <a href="https://github.com/vtchris/" target="_blank" class="fab fa-github text-muted mr-4"
             style="font-size:38px;"></a>
-        <a href="https://www.linkedin.com/in/chris-ross-71a95711/" target="_blank"
-            class="fab fa-linkedin text-muted" style="font-size:38px;"></a>
+        <a href="https://www.linkedin.com/in/chris-ross-71a95711/" target="_blank" class="fab fa-linkedin text-muted"
+            style="font-size:38px;"></a>
 
         <footer>
-        <!-- FOOTER END-->
+            <!-- FOOTER END-->
 
             <script src="assets/javascript/game.js"></script>
 </body>
