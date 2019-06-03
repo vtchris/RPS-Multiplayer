@@ -21,6 +21,8 @@
     <!-- jQuery Reference -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <!-- Link to Moment.js -->
+    <script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
 
 </head>
 
@@ -86,6 +88,31 @@
 
             </div>
         </div>
+        <!-- CHAT BEGIN -->
+        <div class="row mt-3 js_chat">
+            <div class="col col-lg-12">
+                <div id="chat-div" class="card">
+                    <table id="messages-table" class="table">
+                        <tr>
+                            <th>Time</th>
+                            <th>Message</th>
+                            <th>User</th>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+        <div class="row mt-2 js_chat">
+            <div class="col col-lg-8">
+                <input type="text" id="new-message-txt" class="form-control input-lg" maxlength="100" placeholder="100 Character message">
+                
+            </div>
+            <div class="col col-lg-4">
+                    <button id="message-btn" class="btn btn-primary">Send Message</button>
+            </div>
+        </div>
+        <!-- CHAT END -->
     </div>
     <!-- GAME BOARD END-->
 
@@ -140,10 +167,10 @@
         <a href="https://www.linkedin.com/in/chris-ross-71a95711/" target="_blank" class="fab fa-linkedin text-muted"
             style="font-size:38px;"></a>
 
-        <footer>
-            <!-- FOOTER END-->
+    </footer>
+    <!-- FOOTER END-->
 
-            <script src="assets/javascript/game.js"></script>
+    <script src="assets/javascript/game.js"></script>
 </body>
 
 </html>

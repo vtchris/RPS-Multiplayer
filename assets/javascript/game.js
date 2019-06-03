@@ -1,3 +1,19 @@
+//TODO
+//1 database update function
+//Add Messaging
+//Finish Modal Win/Loss
+//Animation reveal/fadeout
+//save matches
+//"Waiting for" messages
+//Mobile tests
+//connect to portfolio
+//Timeout page > return to start
+//Exit to restart
+
+//TODO - DONE
+//Validate IE - apparently sessionStorage can only be used on ie with https.
+//Convert players to objects to reduce global variables
+
 // Your web app's Firebase configuration
 var firebaseConfig = {
     apiKey: "AIzaSyDTO0P1aPPDHfqK0Eu5swF7z2NlrfUfcXw",
@@ -13,29 +29,23 @@ firebase.initializeApp(firebaseConfig);
 var database = firebase.database();
 
 //Set Global Variables
+var arrMessages = [];
+var arrMessagesIdx = 0;
 var arrWeapons = [];
-var currentSnapshot = "";
 var gameStyle = "";
 var intervalTime = (2 * 60 * 1000);
 var lastUpdate = "";
 var mode = $("#mode input:radio:checked").val();
 var opponentImage = "";
-var player1 = "";
-var player1image = "";
-var player1losses = 0;
-var player1weapon = "";
-var player1wins = 0;
-var player2 = "";
-var player2image = "";
-var player2losses = 0;
-var player2weapon = "";
-var player2wins = 0;
+var player1 = new player;
+var player2 = new player;
 var playerImage = "";
 
 //jQuery Variables
 var $gameBoard = $("#gameBoard_div");
 var $gameStyle = $("#game-style-div");
 var $nameTxt = $("#name-txt");
+var $newMessage = $("#new-message-txt")
 var $opponentImg = $("#opponent-img");
 var $opponentLosses = $("#opponent-losses-label");
 var $opponentName = $("#opponentName");
@@ -67,16 +77,16 @@ database.ref().on("value", function (snapshot) {
         } else {
 
             //Update global variables for firebase changes
-            player1 = currentSnapshot.player1;
-            player1image = currentSnapshot.player1image;
-            player1losses = currentSnapshot.player1losses;
-            player1weapon = currentSnapshot.player1weapon;
-            player1wins = currentSnapshot.player1wins;
-            player2 = currentSnapshot.player2;
-            player2image = currentSnapshot.player2image;
-            player2losses = currentSnapshot.player2losses;
-            player2weapon = currentSnapshot.player2weapon;
-            player2wins = currentSnapshot.player2wins;
+            player1.name = currentSnapshot.player1;
+            player1.image = currentSnapshot.player1image;
+            player1.losses = currentSnapshot.player1losses;
+            player1.weapon = currentSnapshot.player1weapon;
+            player1.wins = currentSnapshot.player1wins;
+            player2.name = currentSnapshot.player2;
+            player2.image = currentSnapshot.player2image;
+            player2.losses = currentSnapshot.player2losses;
+            player2.weapon = currentSnapshot.player2weapon;
+            player2.wins = currentSnapshot.player2wins;
 
             //If the gameStyle has been chosen, populate the weapons buttons
             if (gameStyle !== currentSnapshot.gameStyle) {
@@ -89,17 +99,17 @@ database.ref().on("value", function (snapshot) {
             //If Opponents Name = "Awaiting Opponent", check to see if name can be populated
             if ($opponentName.text() === "Awaiting Opponent") {
 
-                if (sessionStorage.getItem("player") === "1" && player2 != "") {
-                    $opponentName.text("Opponent: " + player2);
-                } else if (sessionStorage.getItem("player") === "2" && player1 != "") {
-                    $opponentName.text("Opponent: " + player1);
+                if (sessionStorage.getItem("player") === "1" && player2.name != "") {
+                    $opponentName.text("Opponent: " + player2.name);
+                } else if (sessionStorage.getItem("player") === "2" && player1.name != "") {
+                    $opponentName.text("Opponent: " + player1.name);
                 } else {
                     $opponentName.text("Awaiting Opponent");
                 }
             }
 
             //If both players have selected a weapon, time to battle!
-            if (player1weapon !== "" && player2weapon !== "") {
+            if (player1.weapon !== "" && player2.weapon !== "") {
 
                 battle();
 
@@ -107,6 +117,41 @@ database.ref().on("value", function (snapshot) {
         }
     }
 })
+$("#message-btn").on("click", function () {
+    if ($newMessage.value !== "") {
+        arrMessages.push(new newText(player1.name, $newMessage.val(), "1"))
+    }
+
+    $newMessage.val("");  
+    display_messages();
+})
+
+function display_messages() {
+      
+
+    while (arrMessagesIdx < arrMessages.length) {
+        // let newP = $("<p>")
+        // newP.text(arrMessages[arrMessagesIdx].message)
+        // newP.appendTo($("#chat-div"))
+        let newRow = $("<tr>");
+        let newDateTD = $("<td>");
+        let newUserTD = $("<td>");
+        let newMessageTD = $("<td>");
+        newDateTD.text(arrMessages[arrMessagesIdx].dateStamp);
+        newMessageTD.text(arrMessages[arrMessagesIdx].message);
+        newUserTD.text(arrMessages[arrMessagesIdx].name);
+        
+        newDateTD.appendTo(newRow);
+        newMessageTD.appendTo(newRow);
+        newUserTD.appendTo(newRow);
+       
+        newRow.appendTo($("#messages-table"))
+
+        arrMessagesIdx++
+    }
+
+    //arrMessagesIdx = (arrMessages.length - 1)
+}
 //If player 1 selects Rock-Paper-Scissors
 $("#rps-btn").on("click", function () {
 
@@ -121,16 +166,16 @@ $("#rps-btn").on("click", function () {
         database.ref().set({
             gameStyle: "rps",
             lastUpdate: firebase.database.ServerValue.TIMESTAMP,
-            player1: player1,
-            player1image: player1image,
-            player1losses: player1losses,
-            player1weapon: player1weapon,
-            player1wins: player1wins,
-            player2: player2,
-            player2image: player2image,
-            player2losses: player2losses,
-            player2weapon: player2weapon,
-            player2wins: player2wins
+            player1: player1.name,
+            player1image: player1.image,
+            player1losses: player1.losses,
+            player1weapon: player1.weapon,
+            player1wins: player1.wins,
+            player2: player2.name,
+            player2image: player2.image,
+            player2losses: player2.losses,
+            player2weapon: player2.weapon,
+            player2wins: player2.wins
         })
     }
 })
@@ -148,16 +193,16 @@ $("#rpslv-btn").on("click", function () {
         database.ref().set({
             gameStyle: "rpslv",
             lastUpdate: firebase.database.ServerValue.TIMESTAMP,
-            player1: player1,
-            player1image: player1image,
-            player1losses: player1losses,
-            player1weapon: player1weapon,
-            player1wins: player1wins,
-            player2: player2,
-            player2image: player2image,
-            player2losses: player2losses,
-            player2weapon: player2weapon,
-            player2wins: player2wins
+            player1: player1.name,
+            player1image: player1.image,
+            player1losses: player1.losses,
+            player1weapon: player1.weapon,
+            player1wins: player1.wins,
+            player2: player2.name,
+            player2image: player2.image,
+            player2losses: player2.losses,
+            player2weapon: player2.weapon,
+            player2wins: player2.wins
         })
     }
 })
@@ -175,24 +220,27 @@ $("#submit-btn").on("click", function () {
         sessionStorage.setItem("player", "1");
         gameStyle = "";
         $gameStyle.removeClass("display_none");
-        $playerName.text($nameTxt.val().toUpperCase());
+        player1.name = $nameTxt.val().toUpperCase();
+        $playerName.text("Player: " + player1.name);
+        // $playerName.text($nameTxt.val().toUpperCase());
         $opponentName.text("DEEP THOUGHT");
         $("#weapons-div").remove();
+        $(".js_chat").addClass("display_none");
 
         //If 2 player, check firebase fields
     } else if (mode === "2") {
 
         //If lastUpdate is more than 15 minutes ago, or if player1 is not populated, then populate player1
-        if ((Date.now() - lastUpdate > intervalTime) || (player1 === "") || !player1) {
+        if ((Date.now() - lastUpdate > intervalTime) || (player1.name === "") || !player1) {
 
             sessionStorage.setItem("player", "1");
-            player1 = $nameTxt.val().toUpperCase();
+            player1.name = $nameTxt.val().toUpperCase();
 
             // Save the new info to  Firebase
             database.ref().set({
                 gameStyle: "",
                 lastUpdate: firebase.database.ServerValue.TIMESTAMP,
-                player1: player1,
+                player1: player1.name,
                 player1image: "",
                 player1losses: 0,
                 player1weapon: "",
@@ -206,90 +254,90 @@ $("#submit-btn").on("click", function () {
 
             $gameStyle.removeClass("display_none");
             $opponentName.text("Awaiting Opponent");
-            $playerName.text("Player: " + player1);
+            $playerName.text("Player: " + player1.name);
 
         } else if (currentSnapshot.player2 === "") {
 
             sessionStorage.setItem("player", "2");
-            player2 = $nameTxt.val().toUpperCase();
+            player2.name = $nameTxt.val().toUpperCase();
 
             database.ref().set({
                 gameStyle: gameStyle,
                 lastUpdate: firebase.database.ServerValue.TIMESTAMP,
-                player1: player1,
-                player1image: player1image,
-                player1losses: player1losses,
-                player1weapon: player1weapon,
-                player1wins: player1wins,
-                player2: player2,
-                player2image: player2image,
-                player2losses: player2losses,
-                player2weapon: player2weapon,
-                player2wins: player2wins
+                player1: player1.name,
+                player1image: player1.image,
+                player1losses: player1.losses,
+                player1weapon: player1.weapon,
+                player1wins: player1.wins,
+                player2: player2.name,
+                player2image: player2.image,
+                player2losses: player2.losses,
+                player2weapon: player2.weapon,
+                player2wins: player2.wins
             })
 
-            $playerName.text("Player: " + player2);
+            $playerName.text("Player: " + player2.name);
         }
     }
 })
 //END LISTENERS -- START FUNCTIONS
 function battle() {
-    
+
     let winner = "";
-    
-    if (player1weapon === player2weapon) {
-        
-        winner="tie";
+
+    if (player1.weapon === player2.weapon) {
+
+        winner = "tie";
 
     } else {
 
-        switch (player1weapon) {
+        switch (player1.weapon) {
             case "r":
-                if (player2weapon === "s" || player2weapon === "l") {
-                    
+                if (player2.weapon === "s" || player2.weapon === "l") {
+
                     winner = "player1";
 
                 } else {
-                    
+
                     winner = "player2";
                 }
                 break;
             case "p":
-                if (player2weapon === "r" || player2weapon === "v") {
-                    
+                if (player2.weapon === "r" || player2.weapon === "v") {
+
                     winner = "player1";
                 } else {
-                    
+
                     winner = "player2";
                 }
                 break;
             case "s":
-                if (player2weapon === "p" || player2weapon === "l") {
-                    
+                if (player2.weapon === "p" || player2.weapon === "l") {
+
                     winner = "player1";
 
                 } else {
-                    
+
                     winner = "player2";
                 }
                 break;
             case "l":
-                if (player2weapon === "p" || player2weapon === "v") {
-                    
+                if (player2.weapon === "p" || player2.weapon === "v") {
+
                     winner = "player1";
 
                 } else {
-                    
+
                     winner = "player2";
                 }
                 break;
             case "v":
-                if (player2weapon === "s" || player2weapon === "r") {
-                    
+                if (player2.weapon === "s" || player2.weapon === "r") {
+
                     winner = "player1";
 
                 } else {
-                    
+
                     winner = "player2";
 
                 }
@@ -297,10 +345,10 @@ function battle() {
     }
 
     $("#player-img").attr("src", "/assets/images/" + playerImage);
-debugger
+   
     if (mode === "1") {
 
-        $opponentImg.attr("src", "/assets/images/" + player2image);
+        $opponentImg.attr("src", "/assets/images/" + player2.image);
 
         if (winner === "player1") {
 
@@ -312,13 +360,18 @@ debugger
             $opponentImg.css("opacity", "1");
             $playerImg.css("opacity", ".1");
 
+        }else {
+
+            $opponentImg.css("opacity", "1");
+            $playerImg.css("opacity", "1");
+
         }
 
     } else if (mode === "2") {
 
         if (sessionStorage.getItem("player") === "1") {
-           
-            $opponentImg.attr("src", "/assets/images/" + player2image);
+
+            $opponentImg.attr("src", "/assets/images/" + player2.image);
 
             if (winner === "player1") {
 
@@ -329,7 +382,8 @@ debugger
 
                 $opponentImg.css("opacity", "1");
                 $playerImg.css("opacity", ".1");
-            }else {
+
+            } else {
 
                 $opponentImg.css("opacity", "1");
                 $playerImg.css("opacity", "1");
@@ -338,7 +392,7 @@ debugger
 
         } else {
 
-            $("#opponent-img").attr("src", "/assets/images/" + player1image);
+            $("#opponent-img").attr("src", "/assets/images/" + player1.image);
 
             if (winner === "player1") {
 
@@ -350,7 +404,7 @@ debugger
                 $opponentImg.css("opacity", ".1");
                 $playerImg.css("opacity", "1");
 
-            }else {
+            } else {
 
                 $opponentImg.css("opacity", "1");
                 $playerImg.css("opacity", "1");
@@ -366,17 +420,17 @@ debugger
     //Only one player needs to update score, so player 1 is selected for this purpose
     if (sessionStorage.getItem("player") === "1") {
 
-        $opponentLosses.text("LOSSES: " + player2losses);
-        $opponentWins.text("WINS: " + player2wins);
-        $playerLosses.text("LOSSES: " + player1losses);
-        $playerWins.text("WINS: " + player1wins);
-                      
+        $opponentLosses.text("LOSSES: " + player2.losses);
+        $opponentWins.text("WINS: " + player2.wins);
+        $playerLosses.text("LOSSES: " + player1.losses);
+        $playerWins.text("WINS: " + player1.wins);
+
     } else {
-   
-        $opponentLosses.text("LOSSES: " + player1losses);
-        $opponentWins.text("WINS: " + player1wins);
-        $playerLosses.text("LOSSES: " + player2losses);
-        $playerWins.text("WINS: " + player2wins);
+
+        $opponentLosses.text("LOSSES: " + player1.losses);
+        $opponentWins.text("WINS: " + player1.wins);
+        $playerLosses.text("LOSSES: " + player2.losses);
+        $playerWins.text("WINS: " + player2.wins);
 
     }
 }
@@ -395,11 +449,12 @@ function populate_weapons(gameStyle) {
             arrWeapons.push(new weapon("scissors", "s", "fa-hand-scissors", "scissors.jpg"));
     }
 
+
     let array = arrWeapons.slice(0);
-    
+
     newDiv = $("<div>");
     newDiv.attr("id", "weapons-div");
-   
+
     while (array.length > 0) {
 
         //Place weapons in random order
@@ -426,12 +481,12 @@ function populate_weapons(gameStyle) {
 
         if (mode === "1") {
 
-            player1weapon = this.value;
+            player1.weapon = this.value;
 
             //Computer makes weapon choice
             let random = Math.floor(Math.random() * arrWeapons.length);
-            player2image = arrWeapons[random].image;
-            player2weapon = arrWeapons[random].value;            
+            player2.image = arrWeapons[random].image;
+            player2.weapon = arrWeapons[random].value;
 
             //fight, Fight, FIGHT!
             battle();
@@ -440,50 +495,41 @@ function populate_weapons(gameStyle) {
         //Update Firebase for Multiplayer mode only
         if (mode === "2") {
 
-            switch(sessionStorage.getItem("player")){
+            switch (sessionStorage.getItem("player")) {
                 case "1":
-                        database.ref().set({
-                            gameStyle: gameStyle,
-                            lastUpdate: firebase.database.ServerValue.TIMESTAMP,
-                            player1: player1,
-                            player1image: playerImage,
-                            player1losses: player1losses,
-                            player1weapon: this.value,
-                            player1wins: player1wins,                    
-                            player2: player2,
-                            player2image: player2image,
-                            player2losses: player2losses,
-                            player2weapon: player2weapon,
-                            player2wins: player2wins
-                        })
-                        break;
+                    database.ref().set({
+                        gameStyle: gameStyle,
+                        lastUpdate: firebase.database.ServerValue.TIMESTAMP,
+                        player1: player1.name,
+                        player1image: playerImage,
+                        player1losses: player1.losses,
+                        player1weapon: this.value,
+                        player1wins: player1.wins,
+                        player2: player2.name,
+                        player2image: player2.image,
+                        player2losses: player2.losses,
+                        player2weapon: player2.weapon,
+                        player2wins: player2.wins
+                    })
+                    break;
                 case "2":
-                        database.ref().set({
+                    database.ref().set({
 
-                            gameStyle: gameStyle,
-                            lastUpdate: firebase.database.ServerValue.TIMESTAMP,
-                            player1: player1,
-                            player1image: player1image,
-                            player1losses: player1losses,
-                            player1weapon: player1weapon,
-                            player1wins: player1wins,                            
-                            player2: player2,
-                            player2image: playerImage,
-                            player2losses: player2losses,
-                            player2weapon: this.value,
-                            player2wins: player2wins        
-                        })
+                        gameStyle: gameStyle,
+                        lastUpdate: firebase.database.ServerValue.TIMESTAMP,
+                        player1: player1.name,
+                        player1image: player1.image,
+                        player1losses: player1.losses,
+                        player1weapon: player1.weapon,
+                        player1wins: player1.wins,
+                        player2: player2.name,
+                        player2image: playerImage,
+                        player2losses: player2.losses,
+                        player2weapon: this.value,
+                        player2wins: player2.wins
+                    })
 
-            }
-            
-            // if (sessionStorage.getItem("player") === "1") {
-                
-                
-
-            // } else if (sessionStorage.getItem("player") === "2") {
-                
-            // }
-
+            }           
         }
     })
 }
@@ -492,7 +538,7 @@ function reset_game() {
 
     sessionStorage.clear();
     $gameBoard.addClass("display_none");
-    $opponentName.text("Awaiting Opponent");    
+    $opponentName.text("Awaiting Opponent");
     $welcomeDiv.removeClass("display_none");
     $("#weapons-div").remove();
 
@@ -509,16 +555,16 @@ function reset_game() {
         player2losses: "",
         player2weapon: "",
         player2wins: ""
-    })    
+    })
 }
 function update_score(winner) {
 
     if (winner === "player1") {
-        player1wins++;
-        player2losses++;
+        player1.wins++;
+        player2.losses++;
     } else if (winner === "player2") {
-        player1losses++;
-        player2wins++;
+        player1.losses++;
+        player2.wins++;
     }
 
     if (mode === "2") {
@@ -526,18 +572,34 @@ function update_score(winner) {
 
             gameStyle: gameStyle,
             lastUpdate: firebase.database.ServerValue.TIMESTAMP,
-            player1: player1,
+            player1: player1.name,
             player1image: "",
-            player1losses: player1losses,
+            player1losses: player1.losses,
             player1weapon: "",
-            player1wins: player1wins,            
-            player2: player2,
+            player1wins: player1.wins,
+            player2: player2.name,
             player2image: "",
-            player2losses: player2losses,
+            player2losses: player2.losses,
             player2weapon: "",
-            player2wins: player2wins
+            player2wins: player2.wins
         })
     }
+}
+//PROTOTYPES
+//Message prototype
+function newText(name, newMessage, player) {
+    this.name = name;
+    this.message = newMessage;
+    this.player = player;
+    this.dateStamp = moment().format("MM-DD-YYYY HH:mm:ss")
+}
+//Player prototype
+function player(){
+    this.image = "";
+    this.losses = 0;
+    this.name = ""; 
+    this.weapon = ""
+    this.wins = 0;
 }
 //Weapon prototype
 function weapon(name, value, faClass, img) {
