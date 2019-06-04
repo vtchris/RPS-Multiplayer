@@ -24,3 +24,15 @@ body{
 #weapons-div .btn{
     min-width:120px;
 }
+@media screen and (max-width:668px){
+    ul{
+        padding-left:1px;
+    }
+    .container{
+        margin-bottom:160px;
+    }
+    .display-5{
+        font-size: 10px;
+    }
+        
+}

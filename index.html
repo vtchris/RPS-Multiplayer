@@ -53,14 +53,14 @@
                 <h2>Select Game</h2>
             </div>
             <div class="card-body">
-                <button id="rps-btn" class="btn btn-primary">Rock-Paper-Scissors</button>
-                <button id="rpslv-btn" class="btn btn-primary">Rock-Paper-Scissors-Lizard-Spock</button>
+                <button id="rps-btn" class="btn btn-primary mb-2">Rock-Paper-Scissors</button>
+                <button id="rpslv-btn" class="btn btn-primary mb-2">Rock-Paper-Scissors-Lizard-Spock</button>
             </div>
         </div>
 
-        <div class="row mt-5">
-            <div class="col col-lg-6 d-flex align-items-stretch">
-                <div id="player-div" class="card shadow">
+        <div class="row mt-5 text-center">
+            <div class="col col-lg-12 card-deck">
+                <div id="player-div" class="card shadow mb-2">
                     <div class="card-header bg-secondary text-light">
                         <h2 id="playerName"></h2>
                     </div>
@@ -68,13 +68,11 @@
 
                     </div>
                     <div class="card-footer bg-secondary text-light">
-                        <label id="player-wins-label"></label>
+                        <label id="player-wins-label" class=" float-left"></label>
                         <label id="player-losses-label" class="float-right"></label>
                     </div>
                 </div>
-            </div>
-            <div class="col col-lg-6 d-flex align-items-stretch">
-                <div class="card shadow">
+                <div class="card shadow mb-2">
                     <div class="card-header bg-secondary text-light">
                         <h2 id="opponentName"></h2>
                     </div>
@@ -82,12 +80,12 @@
 
                     </div>
                     <div class="card-footer bg-secondary text-light">
-                        <label id="opponent-wins-label"></label>
+                        <label id="opponent-wins-label" class=" float-left"></label>
                         <label id="opponent-losses-label" class="float-right"></label>
                     </div>
                 </div>
-
             </div>
+            
         </div>
         <!-- CHAT BEGIN -->
         <div class="row mt-3 js_chat">

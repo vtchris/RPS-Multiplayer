@@ -1,9 +1,7 @@
 //TODO
 //Animation reveal/fadeout
 //"Waiting for" messages
-//Mobile tests
 //Validate IE
-//connect to portfolio
 //Exit to restart
 
 //TODO - DONE
@@ -13,6 +11,8 @@
 //Add Messaging
 //Finish Modal Win/Loss
 //Timeout page > return to start
+//connect to portfolio
+//Mobile tests
 
 // Your web app's Firebase configuration
 var firebaseConfig = {
@@ -570,7 +570,7 @@ function populate_weapons(gameStyle) {
 }
 //Reset Game
 function reset_game(currentSnapshot) {
-debugger
+
     clearTimeout(intervalId);
         
     $("#results-modal").modal("hide");
