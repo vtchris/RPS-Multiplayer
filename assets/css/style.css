@@ -10,11 +10,16 @@ body{
 {
     opacity:0.4 !important;
 }
+#chat-div{
+    max-height: 160px;
+    overflow-y: auto;
+}
 #pageFooter{
     border-top: 2px solid #66ffff;
 }
 #results-modal img{
     height: 150px;width:auto;
+    max-width:220px;
 }
 #weapons-div .btn{
     min-width:120px;

@@ -1,18 +1,18 @@
 //TODO
-//Add Messaging
-//Finish Modal Win/Loss
 //Animation reveal/fadeout
 //"Waiting for" messages
 //Mobile tests
+//Validate IE
 //connect to portfolio
-//Timeout page > return to start
 //Exit to restart
 
 //TODO - DONE
-//Validate IE - apparently sessionStorage can only be used on ie with https.
 //Convert players to objects to reduce global variables
 //1 database update function
 //Save matches
+//Add Messaging
+//Finish Modal Win/Loss
+//Timeout page > return to start
 
 // Your web app's Firebase configuration
 var firebaseConfig = {
@@ -32,8 +32,10 @@ var database = firebase.database();
 var arrMessages = [];
 var arrMessagesIdx = 0;
 var arrWeapons = [];
+var browserPlayer = 0;
 var gameStyle = "";
-var intervalTime = (2 * 60 * 1000);
+var intervalId = 0;
+var intervalTime = (3 * 60 * 1000);
 var lastUpdate = "";
 var mode = $("#mode input:radio:checked").val();
 var opponentImage = "";
@@ -54,10 +56,12 @@ var $playerImg = $("#player-img");
 var $playerLosses = $("#player-losses-label");
 var $playerName = $("#playerName");
 var $playerWins = $("#player-wins-label");
+var $resultsHeader = $("#results-h")
 var $welcomeDiv = $("#welcome-div");
 
-sessionStorage.clear();
+//sessionStorage.clear();
 $opponentName.text("Awaiting Opponent");
+$(".js_messages").remove();
 
 //Attach Listeners
 database.ref().child("currentMatch").on("value", function (snapshot) {
@@ -68,7 +72,7 @@ database.ref().child("currentMatch").on("value", function (snapshot) {
         console.log(snapshot.val());
         currentSnapshot = snapshot.val();
         lastUpdate = currentSnapshot.lastUpdate;
-
+                        
         if (Date.now() - lastUpdate > intervalTime) {
 
             //Reset the game if the interval time has been exceeded since last firebase update
@@ -76,10 +80,19 @@ database.ref().child("currentMatch").on("value", function (snapshot) {
 
         } else {
 
-            //Update global variables for firebase changes
+            //Update global variables for firebase changes            
+            if (currentSnapshot.chat) {
+                arrMessages = currentSnapshot.chat;
+            }
+
             player1 = currentSnapshot.oPlayer1;
             player2 = currentSnapshot.oPlayer2;
             
+            if(player1.name != ""){
+                clearTimeout(intervalId);
+                set_timer();
+            }
+
             //If the gameStyle has been chosen, populate the weapons buttons
             if (gameStyle !== currentSnapshot.gameStyle) {
                 gameStyle = currentSnapshot.gameStyle;
@@ -91,9 +104,11 @@ database.ref().child("currentMatch").on("value", function (snapshot) {
             //If Opponents Name = "Awaiting Opponent", check to see if name can be populated
             if ($opponentName.text() === "Awaiting Opponent") {
 
-                if (sessionStorage.getItem("player") === "1" && player2.name != "") {
+                //if (sessionStorage.getItem("player") === "1" && player2.name != "") {
+                if (browserPlayer === 1 && player2.name != "") {
                     $opponentName.text("Opponent: " + player2.name);
-                } else if (sessionStorage.getItem("player") === "2" && player1.name != "") {
+                    //} else if (sessionStorage.getItem("player") === "2" && player1.name != "") {
+                } else if (browserPlayer === 2 && player1.name != "") {
                     $opponentName.text("Opponent: " + player1.name);
                 } else {
                     $opponentName.text("Awaiting Opponent");
@@ -106,48 +121,50 @@ database.ref().child("currentMatch").on("value", function (snapshot) {
                 battle();
 
             }
+
+            if (arrMessagesIdx < arrMessages.length) {
+                populate_user_messages();
+            }
+
+
         }
     }
 })
+document.addEventListener("keyup", function (event) {
+
+    if (event.keyCode === 13) {
+        if ($welcomeDiv.is(":visible")) {
+            $("#submit-btn").click();
+        } else if ($newMessage.is(":visible")) {
+            $("#message-btn").click();
+        }
+    }
+
+})
 $("#message-btn").on("click", function () {
-    if ($newMessage.value !== "") {
-        arrMessages.push(new newText(player1.name, $newMessage.val(), "1"))
+
+    event.preventDefault();
+    
+    if ($newMessage.val() !== "") {
+        let browserName = "";
+        if (browserPlayer === 1) {
+            browserName = player1.name;
+        } else {
+            browserName = player2.name;
+        }
+        arrMessages.push(new newText(browserName, $newMessage.val(), browserPlayer));
+        update_database();
     }
 
     $newMessage.val("");
-    update_database();
-    display_messages();
+    $newMessage.focus();
+
 })
 
-function display_messages() {
-
-
-    while (arrMessagesIdx < arrMessages.length) {
-        // let newP = $("<p>")
-        // newP.text(arrMessages[arrMessagesIdx].message)
-        // newP.appendTo($("#chat-div"))
-        let newRow = $("<tr>");
-        let newDateTD = $("<td>");
-        let newUserTD = $("<td>");
-        let newMessageTD = $("<td>");
-        newDateTD.text(arrMessages[arrMessagesIdx].dateStamp);
-        newMessageTD.text(arrMessages[arrMessagesIdx].message);
-        newUserTD.text(arrMessages[arrMessagesIdx].name);
-
-        newDateTD.appendTo(newRow);
-        newMessageTD.appendTo(newRow);
-        newUserTD.appendTo(newRow);
-
-        newRow.appendTo($("#messages-table"))
-
-        arrMessagesIdx++
-    }
-
-    //arrMessagesIdx = (arrMessages.length - 1)
-}
 //If player 1 selects Rock-Paper-Scissors
 $("#rps-btn").on("click", function () {
 
+    event.preventDefault();    
     $gameStyle.addClass("display_none");
 
     if (mode === "1") {
@@ -165,6 +182,7 @@ $("#rps-btn").on("click", function () {
 //If player 1 selects Rock-Paper-Scissors-Lizard-Spock
 $("#rpslv-btn").on("click", function () {
 
+    event.preventDefault();
     $gameStyle.addClass("display_none");
 
     if (mode === "1") {
@@ -182,6 +200,14 @@ $("#rpslv-btn").on("click", function () {
 //Determine if player 1 or player 2
 $("#submit-btn").on("click", function () {
 
+    event.preventDefault();
+    set_timer();
+
+    if ($nameTxt.val() === "") {
+        $nameTxt.focus();
+        return;
+    }
+
     //Find desired mode (1 player or 2)
     mode = $("#mode input:radio:checked").val();
     $welcomeDiv.addClass("display_none");
@@ -190,14 +216,8 @@ $("#submit-btn").on("click", function () {
     //If 1 player, set Computer as opponent and setup board
     if (mode === "1") {
 
-        sessionStorage.setItem("player", "1");
-        gameStyle = "";
-        $gameStyle.removeClass("display_none");
-        player1.name = $nameTxt.val().toUpperCase();
-        $playerName.text("Player: " + player1.name);
-        $opponentName.text("DEEP THOUGHT");
-        $("#weapons-div").remove();
-        $(".js_chat").addClass("display_none");
+        //sessionStorage.setItem("player", "1");
+        setup_singlePlayer();
 
         //If 2 player, check firebase fields
     } else if (mode === "2") {
@@ -205,7 +225,8 @@ $("#submit-btn").on("click", function () {
         //If lastUpdate is more than 15 minutes ago, or if player1 is not populated, then populate player1
         if ((Date.now() - lastUpdate > intervalTime) || (player1.name === "") || !player1) {
 
-            sessionStorage.setItem("player", "1");
+            //sessionStorage.setItem("player", "1");
+            browserPlayer = 1;
             player1.name = $nameTxt.val().toUpperCase();
 
             // Save the new info to  Firebase
@@ -215,24 +236,31 @@ $("#submit-btn").on("click", function () {
             $opponentName.text("Awaiting Opponent");
             $playerName.text("Player: " + player1.name);
 
-        } else if (currentSnapshot.player2 === "") {
+        } else if (currentSnapshot.oPlayer2.name === "") {
 
-            sessionStorage.setItem("player", "2");
+            //sessionStorage.setItem("player", "2");
+            browserPlayer = 2;
             player2.name = $nameTxt.val().toUpperCase();
 
             update_database();
 
             $playerName.text("Player: " + player2.name);
+        } else {
+
+            setup_singlePlayer();
+
         }
     }
 })
 //END LISTENERS -- START FUNCTIONS
 function battle() {
 
+    let results = "Battle Results";
     let winner = "";
 
     if (player1.weapon === player2.weapon) {
 
+        results = "IT'S A DRAW!"
         winner = "tie";
 
     } else {
@@ -246,12 +274,14 @@ function battle() {
                 } else {
 
                     winner = "player2";
+
                 }
                 break;
             case "p":
                 if (player2.weapon === "r" || player2.weapon === "v") {
 
                     winner = "player1";
+
                 } else {
 
                     winner = "player2";
@@ -290,11 +320,60 @@ function battle() {
         }
     }
 
-    $("#player-img").attr("src", "/assets/images/" + playerImage);
+    switch (player1.weapon + player2.weapon) {
+        case "rp":
+        case "pr":
+            results = "Paper covers Rock";
+            break;
+        case "rs":
+        case "sr":
+            results = "Rock crushes Scissors";
+            break;
+        case "rl":
+        case "lr":
+            results = "Rock crushes Lizard";
+            break;
+        case "rv":
+        case "vr":
+            results = "Spock vaporizes Rock";
+            break;
+        case "ps":
+        case "sp":
+            results = "Scissors cut Paper";
+            break;
+        case "pl":
+        case "lp":
+            results = "Lizard eats Paper";
+            break;
+        case "pv":
+        case "vp":
+            results = "Paper disproves Spock";
+            break;
+        case "sl":
+        case "ls":
+            results = "Scissors decapitates Lizard";
+            break;
+        case "sv":
+        case "vs":
+            results = "Spock crushes Scissors";
+            break;
+        case "lv":
+        case "vl":
+            results = "Lizard poisons Spock";
+            break;
+    }
+
+    $("#player-img").attr("src", "assets/images/" + playerImage);
+    if(winner === "player1"){
+        results = results + ": " + player1.name + " WINS!"
+    }else if(winner === "player2"){
+        results = results + ": " + player2.name + " WINS!"
+    }
+    $resultsHeader.text(results);
 
     if (mode === "1") {
 
-        $opponentImg.attr("src", "/assets/images/" + player2.image);
+        $opponentImg.attr("src", "assets/images/" + player2.image);
 
         if (winner === "player1") {
 
@@ -315,9 +394,10 @@ function battle() {
 
     } else if (mode === "2") {
 
-        if (sessionStorage.getItem("player") === "1") {
+        // if (sessionStorage.getItem("player") === "1") {
+        if (browserPlayer === 1) {
 
-            $opponentImg.attr("src", "/assets/images/" + player2.image);
+            $opponentImg.attr("src", "assets/images/" + player2.image);
 
             if (winner === "player1") {
 
@@ -338,7 +418,7 @@ function battle() {
 
         } else {
 
-            $("#opponent-img").attr("src", "/assets/images/" + player1.image);
+            $("#opponent-img").attr("src", "assets/images/" + player1.image);
 
             if (winner === "player1") {
 
@@ -360,11 +440,13 @@ function battle() {
     }
 
     $("#results-modal").modal("show");
+    $("#weapons-div").removeClass("invisible");
 
     update_score(winner);
 
     //Only one player needs to update score, so player 1 is selected for this purpose
-    if (sessionStorage.getItem("player") === "1") {
+    //if (sessionStorage.getItem("player") === "1") {
+    if (browserPlayer === 1) {
 
         $opponentLosses.text("LOSSES: " + player2.losses);
         $opponentWins.text("WINS: " + player2.wins);
@@ -378,6 +460,31 @@ function battle() {
         $playerLosses.text("LOSSES: " + player2.losses);
         $playerWins.text("WINS: " + player2.wins);
 
+    }
+}
+function populate_user_messages() {
+
+
+    while (arrMessagesIdx < arrMessages.length) {
+
+        let newRow = $("<tr>");
+        let newDateTD = $("<td>");
+        let newUserTD = $("<td>");
+        let newMessageTD = $("<td>");
+        newDateTD.text(arrMessages[arrMessagesIdx].dateStamp);
+        newMessageTD.text(arrMessages[arrMessagesIdx].message);
+        if (browserPlayer !== arrMessages[arrMessagesIdx].player) {
+            newRow.addClass("text-info");
+        }
+        newRow.addClass("js_messages");
+        newUserTD.text(arrMessages[arrMessagesIdx].name);
+        newDateTD.appendTo(newRow);
+        newMessageTD.appendTo(newRow);
+        newUserTD.appendTo(newRow);
+
+        newRow.prependTo($("#messages-table"))
+
+        arrMessagesIdx++
     }
 }
 function populate_weapons(gameStyle) {
@@ -394,7 +501,6 @@ function populate_weapons(gameStyle) {
             arrWeapons.push(new weapon("paper", "p", "fa-hand-paper", "paper.jpg"));
             arrWeapons.push(new weapon("scissors", "s", "fa-hand-scissors", "scissors.jpg"));
     }
-
 
     let array = arrWeapons.slice(0);
 
@@ -421,8 +527,11 @@ function populate_weapons(gameStyle) {
 
     $(".js_weapon").on("click", function () {
 
+        event.preventDefault();
         console.log(this.value);
 
+        $("#weapons-div").addClass("invisible");
+        
         playerImage = $(this).attr("data-image");
 
         if (mode === "1") {
@@ -441,14 +550,15 @@ function populate_weapons(gameStyle) {
         //Update Firebase for Multiplayer mode only
         if (mode === "2") {
 
-            switch (sessionStorage.getItem("player")) {
-                case "1":
+            //switch (sessionStorage.getItem("player")) {
+            switch (browserPlayer) {
+                case 1:
                     player1.weapon = this.value;
                     player1.image = playerImage;
                     update_database();
 
                     break;
-                case "2":
+                case 2:
 
                     player2.weapon = this.value;
                     player2.image = playerImage;
@@ -460,7 +570,16 @@ function populate_weapons(gameStyle) {
 }
 //Reset Game
 function reset_game(currentSnapshot) {
+debugger
+    clearTimeout(intervalId);
+        
+    $("#results-modal").modal("hide");
 
+    database.ref().child("currentMatch").on("value", function (snapshot) {
+        currentSnapshot = snapshot.val();
+    })
+
+    $nameTxt.val("");
     let array = []
 
     sessionStorage.clear();
@@ -468,26 +587,27 @@ function reset_game(currentSnapshot) {
     $opponentName.text("Awaiting Opponent");
     $welcomeDiv.removeClass("display_none");
     $("#weapons-div").remove();
-   
-    if (currentSnapshot.oPlayer1.name !== ""){
+    $(".js_messages").remove();
 
-        if (currentSnapshot.chat){
-            array = currentSnapshot.chat;        
+    if (currentSnapshot.oPlayer1.name !== "" && currentSnapshot.oPlayer2.name !== "" ) {
+
+        if (currentSnapshot.chat) {
+            array = currentSnapshot.chat;
         }
 
         database.ref().child("matches").push({
-            datePlayed:moment(currentSnapshot.lastUpdate).format("MM-DD-YYYY HH:mm:ss"),
-            gameStyle:currentSnapshot.gameStyle,
-            chat:array,
-            player1:currentSnapshot.oPlayer1.name,
+            datePlayed: moment(currentSnapshot.lastUpdate).format("MM-DD-YYYY HH:mm:ss"),
+            gameStyle: currentSnapshot.gameStyle,
+            chat: array,
+            player1: currentSnapshot.oPlayer1.name,
             player1losses: currentSnapshot.oPlayer1.losses,
-            player1wins:currentSnapshot.oPlayer1.wins,
-            player2:currentSnapshot.oPlayer2.name,
+            player1wins: currentSnapshot.oPlayer1.wins,
+            player2: currentSnapshot.oPlayer2.name,
             player2losses: currentSnapshot.oPlayer2.losses,
-            player2wins:currentSnapshot.oPlayer2.wins
+            player2wins: currentSnapshot.oPlayer2.wins
         })
     }
-    
+
     gameStyle = "";
     arrMessages = [];
     player1 = new player;
@@ -495,23 +615,29 @@ function reset_game(currentSnapshot) {
     update_database();
 
 }
+function set_timer(){
+    intervalId = setTimeout(reset_game,intervalTime)
+}
+function setup_singlePlayer() {
+
+    browserPlayer = 1;
+    gameStyle = "";
+    $gameStyle.removeClass("display_none");
+    player1.name = $nameTxt.val().toUpperCase();
+    $playerName.text("Player: " + player1.name);
+    $opponentName.text("DEEP THOUGHT");
+    $("#weapons-div").remove();
+    $(".js_chat").addClass("display_none");
+    $(".js_messages").remove();
+
+}
 function update_database() {
-    
+
     database.ref().child("currentMatch").set({
         gameStyle: gameStyle,
         lastUpdate: firebase.database.ServerValue.TIMESTAMP,
         chat: arrMessages,
-        player1: player1.name,
-        player1image: player1.image,
-        player1losses: player1.losses,
-        player1weapon: player1.weapon,
-        player1wins: player1.wins,
-        player2: player2.name,
-        player2image: player2.image,
-        player2losses: player2.losses,
-        player2weapon: player2.weapon,
-        player2wins: player2.wins,
-        oPlayer1:player1,
+        oPlayer1: player1,
         oPlayer2: player2
     })
 
