@@ -625,7 +625,8 @@ function setup_singlePlayer() {
     $gameStyle.removeClass("display_none");
     player1.name = $nameTxt.val().toUpperCase();
     $playerName.text("Player: " + player1.name);
-    $opponentName.text("DEEP THOUGHT");
+    player2.name = "DEEP THOUGHT"    
+    $opponentName.text(player2.name);
     $("#weapons-div").remove();
     $(".js_chat").addClass("display_none");
     $(".js_messages").remove();

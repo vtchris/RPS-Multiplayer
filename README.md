@@ -9,6 +9,9 @@
   <li>Database: Firebase</li>
 </ul> 
 
+Play online at:
+https://vtchris.github.io/RPS-Multiplayer/
+
 <h2>Mission (Homework)</h2> 
 # Unit 7 Assignment - Rock Paper Scissors (Challenge)
 
