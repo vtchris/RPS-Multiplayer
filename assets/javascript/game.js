@@ -207,7 +207,7 @@ $("#submit-btn").on("click", function () {
     $opponentWins.text("WINS: 0");
     $opponentLosses.text("LOSSES: 0");
 
-    if (trim($nameTxt.val()) === "") {
+    if ($nameTxt.val().trim() === "") {
         $nameTxt.focus();
         return;
     }
