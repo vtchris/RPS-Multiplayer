@@ -207,7 +207,7 @@ $("#submit-btn").on("click", function () {
     $opponentWins.text("WINS: 0");
     $opponentLosses.text("LOSSES: 0");
 
-    if ($nameTxt.val() === "") {
+    if (trim($nameTxt.val()) === "") {
         $nameTxt.focus();
         return;
     }
@@ -216,7 +216,7 @@ $("#submit-btn").on("click", function () {
     mode = $("#mode input:radio:checked").val();
     $welcomeDiv.addClass("display_none");
     $gameBoard.removeClass("display_none");
-debugger
+
     //If 1 player, set Computer as opponent and setup board
     if (mode === "1") {
 
