@@ -198,8 +198,7 @@ $("#submit-btn").on("click", function () {
         $nameTxt.focus();
         return;
     }
-
-    set_timer();
+    
     $playerWins.text("WINS: 0");
     $playerLosses.text("LOSSES: 0");
     $opponentWins.text("WINS: 0");
@@ -249,6 +248,11 @@ $("#submit-btn").on("click", function () {
 
         }
     }
+
+    if(mode==="1"){
+        set_timer();
+    }
+
 })
 //END LISTENERS -- START FUNCTIONS
 function battle() {
