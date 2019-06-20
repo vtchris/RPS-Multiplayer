@@ -1,4 +1,6 @@
 <h1><em>Rock Paper Scissors - Multiplayer</em></h1>
+Play online at:
+https://vtchris.github.io/RPS-Multiplayer/
 
 <h2>Technology</h2>
 <ul> 
@@ -9,8 +11,11 @@
   <li>Database: Firebase</li>
 </ul> 
 
-Play online at:
-https://vtchris.github.io/RPS-Multiplayer/
+![](assets/images/demo/main.jpg)
+<p>Players have the option to play against the computer in single user mode, or against an opponent (through the use of Firebase). Currently supports one multiplayer game at a time.</p>
+
+![](assets/images/demo/awaiting-opponent.jpg)
+<p>Select your weapon, or taunt your opponent through the built in messaging.</p>
 
 <h2>Mission (Homework)</h2> 
 # Unit 7 Assignment - Rock Paper Scissors (Challenge)
