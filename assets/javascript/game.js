@@ -72,7 +72,7 @@ database.ref().child("currentMatch").on("value", function (snapshot) {
         console.log(snapshot.val());
         currentSnapshot = snapshot.val();
         lastUpdate = currentSnapshot.lastUpdate;
-                        
+
         if (Date.now() - lastUpdate > intervalTime) {
 
             //Reset the game if the interval time has been exceeded since last firebase update
@@ -87,8 +87,8 @@ database.ref().child("currentMatch").on("value", function (snapshot) {
 
             player1 = currentSnapshot.oPlayer1;
             player2 = currentSnapshot.oPlayer2;
-            
-            if(player1.name != ""){
+
+            if (player1.name != "") {
                 clearTimeout(intervalId);
                 set_timer();
             }
@@ -144,7 +144,7 @@ document.addEventListener("keyup", function (event) {
 $("#message-btn").on("click", function () {
 
     event.preventDefault();
-    
+
     if ($newMessage.val() !== "") {
         let browserName = "";
         if (browserPlayer === 1) {
@@ -164,18 +164,14 @@ $("#message-btn").on("click", function () {
 //If player 1 selects Rock-Paper-Scissors
 $("#rps-btn").on("click", function () {
 
-    event.preventDefault();    
+    event.preventDefault();
     $gameStyle.addClass("display_none");
+    gameStyle = "rps"
+    populate_weapons(gameStyle);
 
-    if (mode === "1") {
+    if (mode === "2") {
 
-        populate_weapons("rps");
-
-    } else if (mode === "2") {
-
-        gameStyle = "rps"
         update_database();
-        populate_weapons(gameStyle);
 
     }
 })
@@ -184,16 +180,12 @@ $("#rpslv-btn").on("click", function () {
 
     event.preventDefault();
     $gameStyle.addClass("display_none");
+    gameStyle = "rpslv"
+    populate_weapons(gameStyle);
 
-    if (mode === "1") {
+    if (mode === "2") {
 
-        populate_weapons("rpslv");
-
-    } else if (mode === "2") {
-
-        gameStyle = "rpslv"
         update_database();
-        populate_weapons(gameStyle);
 
     }
 })
@@ -201,16 +193,17 @@ $("#rpslv-btn").on("click", function () {
 $("#submit-btn").on("click", function () {
 
     event.preventDefault();
-    set_timer();
-    $playerWins.text("WINS: 0");
-    $playerLosses.text("LOSSES: 0");
-    $opponentWins.text("WINS: 0");
-    $opponentLosses.text("LOSSES: 0");
 
     if ($nameTxt.val().trim() === "") {
         $nameTxt.focus();
         return;
     }
+
+    set_timer();
+    $playerWins.text("WINS: 0");
+    $playerLosses.text("LOSSES: 0");
+    $opponentWins.text("WINS: 0");
+    $opponentLosses.text("LOSSES: 0");
 
     //Find desired mode (1 player or 2)
     mode = $("#mode input:radio:checked").val();
@@ -251,6 +244,7 @@ $("#submit-btn").on("click", function () {
             $playerName.text("Player: " + player2.name);
         } else {
 
+            mode = "1";
             setup_singlePlayer();
 
         }
@@ -368,9 +362,9 @@ function battle() {
     }
 
     $("#player-img").attr("src", "assets/images/" + playerImage);
-    if(winner === "player1"){
+    if (winner === "player1") {
         results = results + ": " + player1.name + " WINS!"
-    }else if(winner === "player2"){
+    } else if (winner === "player2") {
         results = results + ": " + player2.name + " WINS!"
     }
     $resultsHeader.text(results);
@@ -535,7 +529,7 @@ function populate_weapons(gameStyle) {
         console.log(this.value);
 
         $("#weapons-div").addClass("invisible");
-        
+
         playerImage = $(this).attr("data-image");
 
         if (mode === "1") {
@@ -577,7 +571,7 @@ function reset_game(currentSnapshot) {
 
     clearTimeout(intervalId);
     save_match();
-        
+
     $("#results-modal").modal("hide");
 
     // database.ref().child("currentMatch").on("value", function (snapshot) {
@@ -585,7 +579,7 @@ function reset_game(currentSnapshot) {
     // })
 
     $nameTxt.val("");
-    
+
 
     //sessionStorage.clear();
     $gameBoard.addClass("display_none");
@@ -614,15 +608,15 @@ function reset_game(currentSnapshot) {
     // }
 
 }
-function save_match(){
+function save_match() {
 
     let array = [];
-    
+
     database.ref().child("currentMatch").on("value", function (snapshot) {
         currentSnapshot = snapshot.val();
     })
 
-    if (currentSnapshot.oPlayer1.name !== "" && currentSnapshot.oPlayer2.name !== "" ) {
+    if (currentSnapshot.oPlayer1.name !== "" && currentSnapshot.oPlayer2.name !== "") {
 
         if (currentSnapshot.chat) {
             array = currentSnapshot.chat;
@@ -647,8 +641,8 @@ function save_match(){
     player2 = new player;
     update_database();
 }
-function set_timer(){
-    intervalId = setTimeout(reset_game,intervalTime)
+function set_timer() {
+    intervalId = setTimeout(reset_game, intervalTime)
 }
 function setup_singlePlayer() {
 
@@ -657,7 +651,7 @@ function setup_singlePlayer() {
     $gameStyle.removeClass("display_none");
     player1.name = $nameTxt.val().toUpperCase();
     $playerName.text("Player: " + player1.name);
-    player2.name = "DEEP THOUGHT"    
+    player2.name = "DEEP THOUGHT"
     $opponentName.text(player2.name);
     $("#weapons-div").remove();
     $(".js_chat").addClass("display_none");
