@@ -249,7 +249,7 @@ $("#submit-btn").on("click", function () {
         }
     }
 
-    if(mode==="1"){
+    if(mode === "1"){
         set_timer();
     }
 
