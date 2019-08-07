@@ -12,9 +12,11 @@ https://vtchris.github.io/RPS-Multiplayer/
 </ul> 
 
 <p>Players have the option to play against the computer in Single Player Mode, or against an opponent (through the use of Firebase). Currently supports one multiplayer game at a time.</p>
+
 ![](assets/images/demo/main.jpg)
 
 <p>Select your weapon, or taunt your opponent through the built in messaging.</p>
+
 ![](assets/images/demo/awaiting-opponent.jpg)
 
 
